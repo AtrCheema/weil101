@@ -1,0 +1,13 @@
+
+seaborn
+shap
+
+git+https://github.com/Sara-Iftikhar/easy_mpl.git@c60bf1ea32bb9bd792c54e7cd593e887315073d7
+git+https://github.com/AtrCheema/AI4Water.git@13ac348b9664d0e458fdc5efad26b2e4635fdd62
+
+xgboost
+lightgbm
+catboost
+
+scikit-optimize
+h5py
