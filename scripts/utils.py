@@ -7,14 +7,17 @@ in other files.
 """
 
 import os
+import sys
 from typing import Union, List, Tuple, Callable
 
 import shap
+import scipy
 import mapie
 import crepes
 import numpy as np
 import pandas as pd
 
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
@@ -269,9 +272,16 @@ def set_rcParams(**kwargs):
         'legend.title_fontsize': '12',
         'axes.titleweight': 'bold',
         'axes.titlesize': '14',
-        'font.family': "Times New Roman"
+        #'font.family': "Times New Roman"
 
     }
+
+    if sys.platform == "linux":
+
+        _kwargs['font.family'] = 'serif'
+        _kwargs['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
+    else:
+        _kwargs['font.family'] = "Times New Roman"
 
     if kwargs:
         _kwargs.update(kwargs)
@@ -624,6 +634,8 @@ def version_info()->dict:
     info['crepes'] = crepes.__version__
     info['mapie'] = mapie.__version__
     info['shap'] = shap.__version__
+    info['scipy'] = scipy.__version__
+    info['matplotlib'] = matplotlib.__version__
     return info
 
 # %%

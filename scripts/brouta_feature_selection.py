@@ -174,8 +174,8 @@ tb_features = tb_features[0:TOP_K].tolist()
 # as confirmed important, or confirmed rejected or tentative features. Since
 # Boruta involves training the original model again and again, this can be
 # extremely costly if the model training is time consuming.
-# For theory see `this <https://www.jstatsoft.org/article/view/v036i11>`_ and
-# `this <https://www.kaggle.com/code/residentmario/automated-feature-selection-with-boruta/notebook>`_ .
+# For theory see `this article <https://www.jstatsoft.org/article/view/v036i11>`_ and this
+# `kaggle notebook <https://www.kaggle.com/code/residentmario/automated-feature-selection-with-boruta/notebook>`_ .
 
 class MyBoruta(BorutaShap):
     def box_plot(self, data, X_rotation, X_size, y_scale, figsize):

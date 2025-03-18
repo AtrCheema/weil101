@@ -10,8 +10,9 @@ nbsphinx
 seaborn
 shap==0.41.0
 
-git+https://github.com/Sara-Iftikhar/easy_mpl.git@c60bf1ea32bb9bd792c54e7cd593e887315073d7
-git+https://github.com/AtrCheema/AI4Water.git@13ac348b9664d0e458fdc5efad26b2e4635fdd62
+easy_mpl
+
+git+https://github.com/AtrCheema/AI4Water.git@dev
 git+https://github.com/Ekeany/Boruta-Shap.git@cddb6da69c59b58b9e4d74681202fb0d08ec54f7
 
 lightgbm
@@ -27,3 +28,6 @@ crepes==0.1.0
 mapie==0.6.4
 
 scikit-learn==1.2.2
+
+matplotlib==3.7.1
+scipy==1.10.1

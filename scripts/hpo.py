@@ -166,7 +166,7 @@ def objective_fn(
 
 # %%
 # running optimization loop
-# -----------------------
+# --------------------------
 
 optimizer = HyperOpt(
     algorithm=algorithm,
