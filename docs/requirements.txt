@@ -8,7 +8,7 @@ sphinx_issues
 sphinx_gallery
 nbsphinx
 seaborn
-shap#==0.41.0
+shap  #==0.41.0
 
 easy_mpl
 
