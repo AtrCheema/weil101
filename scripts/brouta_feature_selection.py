@@ -9,7 +9,7 @@ perform feature selection using the best model.
 import numpy as np
 
 np.NaN = np.nan  # for compatibility with older versions of NumPy
-np.bool = np.bool_  # for compatibility with older versions of NumPy
+#np.bool = np.bool_  # for compatibility with older versions of NumPy
 
 import seaborn as sns
 
