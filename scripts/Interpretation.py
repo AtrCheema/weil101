@@ -11,7 +11,7 @@ train it. After this we will apply SHAP, PDP and ALE on the trained DecisionTree
 import numpy as np
 import pandas as pd
 
-np.bool = np.bool_
+#np.bool = np.bool_
 
 import shap
 
@@ -115,8 +115,8 @@ shap_values = exp.shap_values(TrainX, TrainY)
 
 summary_plot(shap_values,
     TrainX,
-             max_display=34,
-feature_names=[LABEL_MAP[n] if n in LABEL_MAP else n for n in input_features],
+    max_display=34,
+    feature_names=[LABEL_MAP[n] if n in LABEL_MAP else n for n in input_features],
     show=False)
 if SAVE:
     plt.savefig("results/figures/shap_summary.png", dpi=600, bbox_inches="tight")
