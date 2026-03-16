@@ -11,6 +11,8 @@ train it. After this we will apply SHAP, PDP and ALE on the trained DecisionTree
 import numpy as np
 import pandas as pd
 
+np.bool = np.bool_
+
 import shap
 
 import matplotlib as mpl
