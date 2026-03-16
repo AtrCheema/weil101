@@ -8,12 +8,24 @@ perform feature selection using the best model.
 
 import numpy as np
 
+np.NaN = np.nan  # for compatibility with older versions of NumPy
+
 import seaborn as sns
 
 import matplotlib.pyplot as plt
 
 from easy_mpl import bar_chart
 
+#####  Monkey-patch SciPy before importing BorutaShap because binom_test was renamed to binomtest in SciPy 1.7.0, and BorutaShap uses the old name.
+import scipy.stats as stats
+
+# Add the old name if SciPy only has the new one
+if not hasattr(stats, "binom_test") and hasattr(stats, "binomtest"):
+    def binom_test(x, n=None, p=0.5, alternative="two-sided"):
+        return stats.binomtest(int(x), n=n, p=p, alternative=alternative).pvalue
+    stats.binom_test = binom_test
+
+#####
 from BorutaShap import BorutaShap
 
 from sklearn.tree import DecisionTreeRegressor

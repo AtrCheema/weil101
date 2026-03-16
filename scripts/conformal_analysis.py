@@ -2,10 +2,11 @@
 ======================
 7. Conformal Analysis
 ======================
-Conformal analysis is a distribution free uncertainty quantification method. Its
+Conformal analysis is a distribution free uncertainty quantification method. By `distribution free`, 
+we mean that the method does not make any assumptions about the underlying distribution of the errors/residuals. Its
 purpose is to test the robustness of the trained machine learning method. The standard
 prodcedure is to dived the data into three sets (training, calibration nand test set).
-The model is trained on training data. The calibration set is used to select the heuristic
+The model is trained on training data. The calibration set is used to select the heuristic (rule, score, strategy)
 and then this heuristic is applied using the test set. The final robustness (uncertainty) is
 calculated on the test set which is not shown to the model at any stage before this.
 """
@@ -17,7 +18,8 @@ import matplotlib.pyplot as plt
 from lightgbm import LGBMRegressor
 
 from crepes import ConformalRegressor
-from crepes.fillings import sigma_knn, binning
+#from crepes.fillings import sigma_knn, binning
+from crepes.extras import binning
 
 from ai4water.utils.utils import TrainTestSplit
 
@@ -28,7 +30,8 @@ from sklearn.tree import DecisionTreeRegressor
 
 from mapie.subsample import Subsample
 from mapie.metrics import regression_coverage_score
-from mapie.quantile_regression import MapieQuantileRegressor, MapieRegressor
+from mapie.quantile_regression import MapieQuantileRegressor
+from mapie.regression import MapieRegressor
 
 from utils import SAVE, version_info
 from utils import prepare_data, set_rcParams, plot_ci
@@ -54,7 +57,7 @@ inputs = ['Solution pH', 'Time (m)', 'Anions', 'Ni (At%)', 'HA (mg/L)',
 data, _ = prepare_data(inputs=inputs, outputs="k")
 
 input_features = data.columns.tolist()[0:-1]
-
+len(input_features)
 # %%
 
 output_features = data.columns.tolist()[-1:]
@@ -62,17 +65,26 @@ output_features = data.columns.tolist()[-1:]
 # %%
 
 y = data[output_features].values.reshape(-1,)
+print(y.shape)
 
+# normalize the output variable to be between 0 and 1
 y = np.array([(y[i]-y.min())/(y.max()-y.min()) for i in range(len(y))])
+print(y.shape, y.min(), y.max())
+
+# %%
 
 TrainX, X_test, TrainY, y_test = TrainTestSplit(seed=313).split_by_random(
     data[input_features], y)
+print(TrainX.shape, TrainY.shape, X_test.shape, y_test.shape)
 
+# %%
+# now split the training data into proper training and calibration sets
 X_prop_train, X_cal, y_prop_train, y_cal = TrainTestSplit(seed=313).split_by_random(
     TrainX,
     TrainY)
-
+print(X_prop_train.shape, y_prop_train.shape, X_cal.shape, y_cal.shape)
 # %%
+# First we train a model
 model = DecisionTreeRegressor(random_state=313)
 
 model.fit(X_prop_train, y_prop_train)
@@ -82,7 +94,9 @@ y_hat_cal = model.predict(X_cal)
 residuals_cal = y_cal - y_hat_cal
 
 y_hat_test = model.predict(X_test)
-
+# Now we have residuals for the calibration set and point predictions
+# for the test set. We can now apply conformal regressors to obtain prediction intervals
+# for the test set.
 lowers = {}
 uppers = {}
 
@@ -103,9 +117,9 @@ cr_std.fit(residuals=residuals_cal)
 # for the test set; here using a confidence level of 99%.
 
 coverage = 0.95
-intervals_std = cr_std.predict(y_hat=y_hat_test,
+intervals_std = cr_std.predict_int(y_hat=y_hat_test,
                            confidence=coverage)
-
+print(intervals_std.shape)
 lowers["Standard"] = intervals_std[:, 0]
 uppers["Standard"] = intervals_std[:, 1]
 
@@ -113,18 +127,20 @@ uppers["Standard"] = intervals_std[:, 1]
 # Normalized conformal regressors
 # ---------------------------------
 
-sigmas_cal_knn = sigma_knn(X=X_cal, residuals=residuals_cal)
+#sigmas_cal_knn = sigma_knn(X=X_cal, residuals=residuals_cal)
+from crepes.extras import DifficultyEstimator
+de_knn = DifficultyEstimator()
+de_knn.fit(X=X_cal, residuals=residuals_cal)
+sigmas_cal_knn = de_knn.apply(X_cal)
 
 cr_norm_knn = ConformalRegressor()
 
 cr_norm_knn.fit(residuals=residuals_cal, sigmas=sigmas_cal_knn)
 
 # %%
-sigmas_test_knn = sigma_knn(X=X_cal,
-                            residuals=residuals_cal,
-                            X_test=X_test)
+sigmas_test_knn = de_knn.apply(X_test)
 
-intervals_norm_knn = cr_norm_knn.predict(
+intervals_norm_knn = cr_norm_knn.predict_int(
     y_hat=y_hat_test,
     sigmas=sigmas_test_knn,
 )
@@ -146,7 +162,7 @@ cr_mond.fit(residuals=residuals_cal, bins=bins_cal)
 
 bins_test = binning(values=sigmas_test_knn, bins=bin_thresholds)
 
-intervals_mond = cr_mond.predict(
+intervals_mond = cr_mond.predict_int(
     y_hat=y_hat_test, bins=bins_test)
 
 lowers["Mondrian"] = intervals_mond[:, 0]

@@ -8,9 +8,12 @@ build/
 manuscript/
 __pycache__/
 catboost_info/
+.vscode/
 
 *.csv
 *.png
 *.xlsx
 *.gitkeep
 *.h5
+
+docs/source/sg_execution_times.rst

@@ -371,11 +371,18 @@ def ale_1d(
     """creates 1d ale for a continuous feature
     Copying code from alepython package
     """
-    quantiles = np.unique(
-        np.quantile(
-            X[feature], np.linspace(0, 1, bins + 1), interpolation="lower"
+    if np.__version__ >= "1.23.5":
+        quantiles = np.unique(
+            np.quantile(
+                X[feature], np.linspace(0, 1, bins + 1), method="lower"
+            )
         )
-    )
+    else:
+        quantiles = np.unique(
+            np.quantile(
+                X[feature], np.linspace(0, 1, bins + 1), interpolation="lower"
+            )
+        )
 
     indices = np.clip(
         np.digitize(X[feature], quantiles, right=True) - 1, 0, None

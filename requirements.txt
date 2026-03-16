@@ -12,3 +12,7 @@ catboost
 
 scikit-optimize
 h5py
+
+mapie
+crepes
+BorutaShap

@@ -13,21 +13,22 @@ shap==0.41.0
 easy_mpl
 
 git+https://github.com/AtrCheema/AI4Water.git@dev
-git+https://github.com/Ekeany/Boruta-Shap.git@cddb6da69c59b58b9e4d74681202fb0d08ec54f7
+#git+https://github.com/Ekeany/Boruta-Shap.git@cddb6da69c59b58b9e4d74681202fb0d08ec54f7
+BorutaShap
 
 lightgbm
 catboost
 xgboost
 
-scikit-optimize==0.9.0
-optuna==3.1.0
+scikit-optimize #==0.9.0
+optuna #==3.1.0
 h5py
-numpy==1.23.5
+numpy  #==1.23.5
 BorutaShap
-crepes==0.1.0
-mapie==0.6.4
+crepes #==0.1.0
+mapie #==0.6.4
 
-scikit-learn==1.2.2
+scikit-learn  #==1.2.2
 
-matplotlib==3.7.1
-scipy==1.10.1
+matplotlib #==3.7.1
+scipy #==1.10.1
